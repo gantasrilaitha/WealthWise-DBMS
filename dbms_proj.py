@@ -555,26 +555,34 @@ def extract_certificate_info(file_path):
 
     print("Extracted Certificate ID:", cert_id)
     return cert_id
-def add_certificate(cert_id, cert_name, issue_date, expiry_date):
-    stored_procedure_code = """
-    CREATE PROCEDURE cert_insert(IN cert_id INT, IN cert_name VARCHAR(255), IN issue_date DATE, IN expiry_date DATE)
-    BEGIN
-        INSERT INTO certificate (cert_id, cert_name, issue_date, expiry_date) VALUES(%s,%s,%s,%s) ,(cert_id , cert_name,issue_date,expiry_date);
-    END
-    """
-    
-    # Execute the stored procedure code
-    cursor = db.cursor()
-    cursor.execute(stored_procedure_code)
-    db.commit()
-    
-    
-    # cursor.execute("INSERT INTO certificate (cert_id, cert_name, issue_date, expiry_date) VALUES (%s, %s, %s, %s)",
-    #                (cert_id, cert_name, issue_date, expiry_date))
-    # db.commit()
-    messagebox.showinfo("Success", "Certificate information added!")
 
 def show_certificate_input_window(cert_id):
+    def add_certificate(cert_id, cert_name, issue_date, expiry_date):
+        try:
+            # Call the stored procedure
+            cursor = db.cursor()
+            #cursor.callproc('add_certificate', (cert_id, cert_name, issue_date, expiry_date))
+            #db.commit()
+            cursor.execute("""
+
+            CREATE PROCEDURE add_cert(
+                IN cert_id_param INT,
+                IN cert_name_param VARCHAR(255),
+                IN issue_date_param DATE,
+                IN expiry_date_param DATE
+            )
+            BEGIN
+                INSERT INTO certificate (cert_id, cert_name, issue_date, expiry_date)
+                VALUES (cert_id_param, cert_name_param, issue_date_param, expiry_date_param);
+            END 
+
+            """)
+            db.commit()
+            messagebox.showinfo("Success", "Certificate information added!")
+        except mysql.connector.Error as err:
+            messagebox.showerror("Error", f"Error: {err}")
+
+
     cert_input_window = tk.Toplevel()
     cert_input_window.title("Add Certificate Information")
 
@@ -625,8 +633,14 @@ def show_certificate_input_window(cert_id):
     expiry_date_entry = tk.Entry(wm_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
     expiry_date_entry.pack(pady=5)
 
-    add_cert_button = tk.Button(wm_frame, text="Add Certificate", command=lambda: add_certificate(
-        cert_id_entry.get(), cert_name_entry.get(), issue_date_entry.get(), expiry_date_entry.get()), font=("Helvetica", 15), width=25, bg='blue', fg='white')
+    def add_certificate_from_input():
+        cert_id_value = cert_id_entry.get()
+        cert_name_value = cert_name_entry.get()
+        issue_date_value = issue_date_entry.get()
+        expiry_date_value = expiry_date_entry.get()
+        add_certificate(cert_id_value, cert_name_value, issue_date_value, expiry_date_value)
+
+    add_cert_button = tk.Button(wm_frame, text="Add Certificate", command=add_certificate_from_input, font=("Helvetica", 15), width=25, bg='blue', fg='white')
     add_cert_button.pack(pady=10)
 
     exit_button = tk.Button(wm_frame, text="EXIT", command=cert_input_window.destroy, font=labels_font, width =15, bg='red', fg='white')
