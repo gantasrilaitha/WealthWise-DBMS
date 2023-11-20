@@ -220,7 +220,7 @@ def ass_inves():
         cursor.execute("CREATE TABLE IF NOT EXISTS transaction (transaction_id INT, timestamp DATETIME, transaction_amount DECIMAL(10, 2), transaction_type VARCHAR(255), asset_id INT)")
         cursor.execute("CREATE TABLE IF NOT EXISTS bill (bill_id INT AUTO_INCREMENT PRIMARY KEY, transaction_id INT, timestamp DATETIME, transaction_amount DECIMAL(10, 2), transaction_type VARCHAR(255), asset_id INT, FOREIGN KEY (asset_id) REFERENCES asset(asset_id))")
         cursor.execute("""
-        CREATE TRIGGER bill_trigger
+        CREATE TRIGGER bill_trigger1
         AFTER INSERT ON transaction
         FOR EACH ROW
         BEGIN
@@ -241,6 +241,29 @@ def ass_inves():
         bill_window = tk.Toplevel()
         bill_window.title("Transaction Bill/Acknowledgment")
 
+        
+        icon_path = "images/icon.ico"  # Replace with the path to your icon file
+        bill_window.iconbitmap(icon_path)
+
+        
+        background_image = PhotoImage(file="images/10.png")
+        background_label = tk.Label(bill_window, image=background_image)
+        background_label.place(relwidth=1, relheight=1)
+
+        # Get the screen width and height
+        screen_width = bill_window.winfo_screenwidth()
+        screen_height = bill_window.winfo_screenheight()
+
+        # Set window size and position for fullscreen and centered
+        window_width = int(screen_width )
+        window_height = int(screen_height)
+        bill_window.geometry(f"{window_width}x{window_height}+{int((screen_width - window_width)/2)}+{int((screen_height - window_height)/2)}")
+
+        # Create a frame to contain all widgets
+        bill_frame = tk.Frame(w, pady=20, padx=20)
+        bill_frame.pack(expand=True)
+        bill_frame.configure(bg="#83aeca", highlightbackground="#00013b", highlightthickness=2)
+
         bill_text = f"Transaction ID: {transaction_id}\n"
         bill_text += f"Timestamp: {timestamp}\n"
         bill_text += f"Transaction Amount: {transaction_amount}\n"
@@ -248,8 +271,11 @@ def ass_inves():
         bill_text += f"Asset ID: {asset_id}\n"
         bill_text += f"Bill ID: {bill_record[0]}\n"  # Display the bill ID from the 'bill' table
 
-        bill_label = tk.Label(bill_window, text=bill_text, font=("Helvetica", 15))
+        bill_label = tk.Label(bill_frame, text=bill_text, font=("Helvetica", 15), bg="#83aeca")
         bill_label.pack(pady=10)
+
+        exit_button = tk.Button(bill_frame, text="EXIT", command=bill_window.destroy, font=labels_font, width =15, bg='red', fg='white')
+        exit_button.pack(pady=20)
     def show_asset():
         # seeass_window = tk.Tk()
         # seeass_window.title("BUY ASSET")
@@ -461,7 +487,7 @@ def fm():
                 FROM cus
             """
             cursor.execute(query)
-            result = cursor.fetchall()
+            result = cursor.fetchall() # check this
 
             # Display the result
             for row in result:
@@ -497,11 +523,11 @@ def fm():
     
     label = tk.Label(fm_frame, text="CHOOSE AN OPTION", font=("Helvetica", 16), bg="#83aeca")
     label.pack(pady=10)
-    log_button = tk.Button(fm_frame, text="Fund Manager Login ", command=fm_login, font=("Helvetica", 14), width=35, bg='blue', fg='white')
+    log_button = tk.Button(fm_frame, text="Fund Manager Login ", command=fm_login, font=("Helvetica", 15), width=35, bg='blue', fg='white')
     log_button.pack(pady=10)
-    uc_button= tk.Button(fm_frame, text="Certificate Upload ", command=upload, font=("Helvetica", 14), width=35, bg='blue', fg='white')
+    uc_button= tk.Button(fm_frame, text="Certificate Upload ", command=upload, font=("Helvetica", 15), width=35, bg='blue', fg='white')
     uc_button.pack(pady=10)
-    cm_button= tk.Button(fm_frame, text="View Customer with Maximum Investmert", command=cmi, font=("Helvetica", 14), width=35, bg='blue', fg='white')
+    cm_button= tk.Button(fm_frame, text="View Customer with Maximum Investmert", command=cmi, font=("Helvetica", 15), width=35, bg='blue', fg='white')
     cm_button.pack(pady=10)
 
     exit_button = tk.Button(fm_frame, text="EXIT", command=fm_options_window.destroy, font=labels_font, width =20, bg='red', fg='white')
@@ -554,12 +580,11 @@ def show_certificate_input_window(cert_id):
 
     
     icon_path = "images/icon.ico"  # Replace with the path to your icon file
-
     cert_input_window.iconbitmap(icon_path)
 
     
     background_image = PhotoImage(file="images/6.png")
-    background_label = tk.Label(w, image=background_image)
+    background_label = tk.Label(cert_input_window, image=background_image)
     background_label.place(relwidth=1, relheight=1)
 
     # Get the screen width and height
@@ -601,7 +626,7 @@ def show_certificate_input_window(cert_id):
     expiry_date_entry.pack(pady=5)
 
     add_cert_button = tk.Button(wm_frame, text="Add Certificate", command=lambda: add_certificate(
-        cert_id_entry.get(), cert_name_entry.get(), issue_date_entry.get(), expiry_date_entry.get()), font=("Helvetica", 14))
+        cert_id_entry.get(), cert_name_entry.get(), issue_date_entry.get(), expiry_date_entry.get()), font=("Helvetica", 15), width=25, bg='blue', fg='white')
     add_cert_button.pack(pady=10)
 
     exit_button = tk.Button(wm_frame, text="EXIT", command=cert_input_window.destroy, font=labels_font, width =15, bg='red', fg='white')
@@ -633,30 +658,54 @@ def fm_login():
 
         window = tk.Toplevel()
         window.title("Fund Manager Login / Registration")
-        username_label = tk.Label(window, text="Username:", font=("Helvetica", 15), bg="#83aeca")
+
+        
+        icon_path = "images/icon.ico"  # Replace with the path to your icon file
+        window.iconbitmap(icon_path)
+
+        
+        background_image = PhotoImage(file="images/7.png")
+        background_label = tk.Label(window, image=background_image)
+        background_label.place(relwidth=1, relheight=1)
+
+        # Get the screen width and height
+        screen_width = window.winfo_screenwidth()
+        screen_height = window.winfo_screenheight()
+
+        # Set window size and position for fullscreen and centered
+        window_width = int(screen_width )
+        window_height = int(screen_height)
+        window.geometry(f"{window_width}x{window_height}+{int((screen_width - window_width)/2)}+{int((screen_height - window_height)/2)}")
+
+        # Create a frame to contain all widgets
+        wm_frame = tk.Frame(window, pady=20, padx=20)
+        wm_frame.pack(expand=True)
+        wm_frame.configure(bg="#83aeca", highlightbackground="#00013b", highlightthickness=2)
+
+        username_label = tk.Label(wm_frame, text="Username:", font=("Helvetica", 15), bg="#83aeca")
         username_label.pack(pady=10)
-        username_entry = tk.Entry(window, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
+        username_entry = tk.Entry(wm_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
         username_entry.pack(pady=10)
 
-        password_label = tk.Label(window, text="Password:", font=("Helvetica", 15), bg="#83aeca")
+        password_label = tk.Label(wm_frame, text="Password:", font=("Helvetica", 15), bg="#83aeca")
         password_label.pack(pady=10)
-        password_entry = tk.Entry(window, show="*", font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
+        password_entry = tk.Entry(wm_frame, show="*", font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
         password_entry.pack(pady=10)
 
-        privileges_label = tk.Label(window, text="Privileges:", font=("Helvetica", 15), bg="#83aeca")
+        privileges_label = tk.Label(wm_frame, text="Privileges:", font=("Helvetica", 15), bg="#83aeca")
         privileges_label.pack(pady=10)
 
         privileges_var = tk.StringVar()
         privileges_var.set("SELECT, INSERT, UPDATE, DELETE")  # Default privileges
 
         # Create a dropdown menu for privileges
-        privileges_menu = tk.OptionMenu(window, privileges_var, "SELECT, INSERT, UPDATE, DELETE", "SELECT, INSERT", "SELECT")
+        privileges_menu = tk.OptionMenu(wm_frame, privileges_var, "SELECT, INSERT, UPDATE, DELETE", "SELECT, INSERT", "SELECT")
         privileges_menu.pack(pady=10)
         # Create a button to create the user
-        create_user_button = tk.Button(window, text="Create User", command=create_user, font=("Helvetica", 15), width=25, bg='blue', fg='white')
+        create_user_button = tk.Button(wm_frame, text="Create User", command=create_user, font=("Helvetica", 15), width=25, bg='blue', fg='white')
         create_user_button.pack(pady=10)
 
-        exit_button = tk.Button(window, text="EXIT", command=window.destroy, font=labels_font, width =15, bg='red', fg='white')
+        exit_button = tk.Button(wm_frame, text="EXIT", command=window.destroy, font=labels_font, width =15, bg='red', fg='white')
         exit_button.pack(pady=20)
         window.mainloop()
         
