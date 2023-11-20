@@ -6,6 +6,7 @@ from datetime import datetime
 import random
 from PyPDF2 import PdfFileReader
 from tkinter import filedialog
+from tkinter import PhotoImage
 
 # Create a MySQL database connection
 db = mysql.connector.connect(
@@ -14,6 +15,8 @@ db = mysql.connector.connect(
     password="nagag0410?",
     database="amc"
 )
+
+
 
 cursor = db.cursor()
 
@@ -121,7 +124,7 @@ def check_amc():
 # Function to insert a new AMC record
 def insert_amc():
     amc_id=int(amc_id_entry.get())
-    address = address_entry.get()
+    address = address_entry.get("1.0", tk.END).strip()
     type = type_entry.get()
     amc_name = amc_name_entry.get()
     
@@ -130,26 +133,79 @@ def insert_amc():
     
     db.commit()
     messagebox.showinfo("Success", "AMC record added!")
-def activities():
-    options_window = tk.Tk()
-    options_window.title("Manage...")
-    label = tk.Label(options_window, text="Choose an option:", font=("Helvetica", 16))
-    label.pack(pady=10)
 
-    search_button = tk.Button(options_window, text="Manage Bank Account", command=show_options_window, font=("Helvetica", 14))
+def activities():
+    options_window = tk.Toplevel()
+    options_window.title("WealthWise - Main Menu")
+
+    icon_path = "images/icon.ico"  # Replace with the path to your icon file
+    options_window.iconbitmap(icon_path)
+    
+    screen_width = options_window.winfo_screenwidth()
+    screen_height = options_window.winfo_screenheight()
+
+    # Set window size and position for fullscreen and centered
+    window_width = int(screen_width)
+    window_height = int(screen_height)
+    options_window.geometry(f"{window_width}x{window_height}+{int((screen_width - window_width)/2)}+{int((screen_height - window_height)/2)}")
+
+    options_window.configure(bg="#518db5")
+    background_image1 = PhotoImage(file ="images/4.png")
+    background_label = tk.Label(options_window, image=background_image1)
+    background_label.place(relwidth=1, relheight=1)
+
+    options_frame = tk.Frame(options_window, pady=20, padx=30)
+    options_frame.pack(expand=True)
+    options_frame.configure(bg="#83aeca", highlightbackground="#00013b", highlightthickness=2)
+
+
+    label = tk.Label(options_frame, text="CHOOSE AN OPTION", font=("Helvetica", 16), bg="#83aeca")
+    label.pack(pady=20)
+
+    buttons_font = ("Helvetica", 14)
+    search_button = tk.Button(options_frame, text="Manage Bank Account", command=show_options_window, font= buttons_font, width=25, bg='blue', fg='white')
     search_button.pack(pady=10)
 
-    view_button = tk.Button(options_window, text="Manage Customers", command=cust_options, font=("Helvetica", 14))
+    view_button = tk.Button(options_frame, text="Manage Customers", command=cust_options, font=buttons_font, width=25, bg='blue', fg='white')
     view_button.pack(pady=10)
 
-    add_button = tk.Button(options_window, text="Fund Manager", command=fm, font=("Helvetica", 14))
+    add_button = tk.Button(options_frame, text="Fund Manager", command=fm, font=buttons_font, width=25, bg='blue', fg='white')
     add_button.pack(pady=10)
-    asin_button = tk.Button(options_window, text="Asset Investment", command=ass_inves, font=("Helvetica", 14))
+
+    asin_button = tk.Button(options_frame, text="Asset Investment", command=ass_inves, font=buttons_font, width=25, bg='blue', fg='white')
     asin_button.pack(pady=10)
+
+    exit_button = tk.Button(options_frame, text="EXIT", command=exit_application, font=labels_font, width =15, bg='red', fg='white')
+    exit_button.pack(pady=20)
+
+
     options_window.mainloop()
+
 def ass_inves():
-    options_window = tk.Tk()
-    options_window.title("BUY ASSET")
+    options_window = tk.Toplevel()
+    options_window.title("WealthWise - Asset Management")
+
+    icon_path = "images/icon.ico"  # Replace with the path to your icon file
+    options_window.iconbitmap(icon_path)
+
+    options_window.configure(bg="#518db5")
+    background_image = PhotoImage(file="images/7.png")
+    background_label = tk.Label(options_window, image=background_image)
+    background_label.place(relwidth=1, relheight=1)
+
+    # Get the screen width and height
+    screen_width = options_window.winfo_screenwidth()
+    screen_height = options_window.winfo_screenheight()
+
+    # Set window size and position for fullscreen and centered
+    window_width = int(screen_width )
+    window_height = int(screen_height)
+    options_window.geometry(f"{window_width}x{window_height}+{int((screen_width - window_width)/2)}+{int((screen_height - window_height)/2)}")
+
+    # Create a frame to contain all widgets
+    o_frame = tk.Frame(options_window, pady=20, padx=20)
+    o_frame.pack(expand=True)
+    o_frame.configure(bg="#83aeca", highlightbackground="#00013b", highlightthickness=2)
     
     def buy():
         #transaction_id = random.randint(1000, 9999)
@@ -202,9 +258,10 @@ def ass_inves():
         """
         cursor.execute(query)
         records = cursor.fetchall()
+        print(records)
         search_res_window = tk.Tk()
         search_res_window.title("Search")
-        search_result = tk.Text(search_res_window, height=10, width=50, state="disabled", font=("Helvetica", 12))
+        search_result = tk.Text(search_res_window, height=20, width=120, state="disabled", font=("Helvetica", 12), bg="#83aeca", highlightbackground="#00013b", highlightthickness=2)
         search_result.pack(pady=10)
         if records:
             # Display the search results
@@ -216,46 +273,77 @@ def ass_inves():
         else:
             messagebox.showinfo("Search", "NO assets")
         search_res_window.mainloop()
-    log_button = tk.Button(options_window, text="See Assets ", command=show_asset, font=("Helvetica", 14))
+
+    log_button = tk.Button(o_frame, text="See Assets ", command=show_asset, font=("Helvetica", 15), width=25, bg='blue', fg='white')
     log_button.pack(pady=10)
 
-    asid_label = tk.Label(options_window, text="Asset Id", font=("Helvetica", 12))
+    asid_label = tk.Label(o_frame, text="Asset ID", font=("Helvetica", 15), bg="#83aeca")
     asid_label.pack(pady=5)
-    asid_entry = tk.Entry(options_window, font=("Helvetica", 12))
+    asid_entry = tk.Entry(o_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
     asid_entry.pack(pady=5)
 
-    tid_label = tk.Label(options_window, text="Transaction Id", font=("Helvetica", 12))
+    tid_label = tk.Label(o_frame, text="Transaction ID", font=("Helvetica", 15), bg="#83aeca")
     tid_label.pack(pady=5)
-    tid_entry = tk.Entry(options_window, font=("Helvetica", 12))
+    tid_entry = tk.Entry(o_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
     #tid_entry=random.randint(1000, 9999)
     tid_entry.pack(pady=5)
 
-    tamt_label = tk.Label(options_window, text="Transaction Amt ", font=("Helvetica", 12))
+    tamt_label = tk.Label(o_frame, text="Transaction Amount ", font=("Helvetica", 15), bg="#83aeca")
     tamt_label.pack(pady=5)
-    tamt_entry = tk.Entry(options_window, font=("Helvetica", 12))
+    tamt_entry = tk.Entry(o_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
     tamt_entry.pack(pady=5)
 
-    ttype_label = tk.Label(options_window, text="Transaction Tyoe", font=("Helvetica", 12))
+    ttype_label = tk.Label(o_frame, text="Transaction Tyoe", font=("Helvetica", 15), bg="#83aeca")
     ttype_label.pack(pady=5)
-    ttype_entry = tk.Entry(options_window, font=("Helvetica", 12))
+    ttype_entry = tk.Entry(o_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
     ttype_entry.pack(pady=5)
     
-    buy_button = tk.Button(options_window, text="Buy Assets ", command=buy, font=("Helvetica", 14))
+    buy_button = tk.Button(o_frame, text="Buy Assets ", command=buy, font=("Helvetica", 15), width=25, bg='blue', fg='white')
     buy_button.pack(pady=10)
+
+    exit_button = tk.Button(o_frame, text="EXIT", command=options_window.destroy, font=labels_font, width =15, bg='red', fg='white')
+    exit_button.pack(pady=20)
     options_window.mainloop()
+
 def cust_options():
-    options_window = tk.Tk()
-    options_window.title("CUSTOMER")
-    label = tk.Label(options_window, text="Choose an option:", font=("Helvetica", 16))
-    label.pack(pady=10)
-    log_button = tk.Button(options_window, text="Customer Login ", command=show_cust_options, font=("Helvetica", 14))
+    options_window = tk.Toplevel()
+    options_window.title("WealthWise - Customer Management")
+
+    icon_path = "images/icon.ico"  # Replace with the path to your icon file
+    options_window.iconbitmap(icon_path)
+
+    options_window.configure(bg="#518db5")
+    background_image = PhotoImage(file="images/6.png")
+    background_label = tk.Label(options_window, image=background_image)
+    background_label.place(relwidth=1, relheight=1)
+
+    # Get the screen width and height
+    screen_width = options_window.winfo_screenwidth()
+    screen_height = options_window.winfo_screenheight()
+
+    # Set window size and position for fullscreen and centered
+    window_width = int(screen_width )
+    window_height = int(screen_height)
+    options_window.geometry(f"{window_width}x{window_height}+{int((screen_width - window_width)/2)}+{int((screen_height - window_height)/2)}")
+
+    # Create a frame to contain all widgets
+    o_frame = tk.Frame(options_window, pady=20, padx=20)
+    o_frame.pack(expand=True)
+    o_frame.configure(bg="#83aeca", highlightbackground="#00013b", highlightthickness=2)
+
+    label = tk.Label(o_frame, text="CHOOSE AN OPTION", font=("Helvetica", 16), bg="#83aeca")
+    label.pack(pady=20)
+    log_button = tk.Button(o_frame, text="Customer Login ", command=show_cust_options, font=("Helvetica", 14), width=25, bg='blue', fg='white')
     log_button.pack(pady=10)
-    invest_button = tk.Button(options_window, text="Customer Investment", command=show_cust_invest, font=("Helvetica", 14))
+    invest_button = tk.Button(o_frame, text="Customer Investment", command=show_cust_invest, font=("Helvetica", 14), width=25, bg='blue', fg='white')
     invest_button.pack(pady=10)
-    invest_button = tk.Button(options_window, text="Update Customer Info", command=update_cus_add, font=("Helvetica", 14))
+    invest_button = tk.Button(o_frame, text="Update Customer Info", command=update_cus_add, font=("Helvetica", 14), width=25, bg='blue', fg='white')
     invest_button.pack(pady=10)
-    invest_button = tk.Button(options_window, text="Deactivate Customer Acc.", command=del_cus_id, font=("Helvetica", 14))
+    invest_button = tk.Button(o_frame, text="Deactivate Customer", command=del_cus_id, font=("Helvetica", 14), width=25, bg='blue', fg='white')
     invest_button.pack(pady=10)
+    exit_button = tk.Button(o_frame, text="EXIT", command=options_window.destroy, font=labels_font, width =15, bg='red', fg='white')
+    exit_button.pack(pady=10)
+
     options_window.mainloop()
 
 def update_cus_add():
@@ -328,16 +416,44 @@ def fm():
                 messagebox.showinfo("Max Investment", f"Customer ID: {row[0]}\nCustomer Name: {row[1]}\nMax Investment by Customer: {row[2]}")
         except mysql.connector.Error as err:
             messagebox.showerror("Error", f"Error fetching data: {err}")
-    fm_options_window = tk.Tk()
-    fm_options_window.title("CUSTOMER")
-    label = tk.Label(fm_options_window, text="Choose an option:", font=("Helvetica", 16))
+
+    fm_options_window = tk.Toplevel()
+    fm_options_window.title("WealthWise - Fund Manager Window")
+
+    
+    icon_path = "images/icon.ico"  # Replace with the path to your icon file
+    fm_options_window.iconbitmap(icon_path)
+
+    
+    background_image = PhotoImage(file="images/4.png")
+    background_label = tk.Label(fm_options_window, image=background_image)
+    background_label.place(relwidth=1, relheight=1)
+
+    # Get the screen width and height
+    screen_width = fm_options_window.winfo_screenwidth()
+    screen_height = fm_options_window.winfo_screenheight()
+
+    # Set window size and position for fullscreen and centered
+    window_width = int(screen_width )
+    window_height = int(screen_height)
+    fm_options_window.geometry(f"{window_width}x{window_height}+{int((screen_width - window_width)/2)}+{int((screen_height - window_height)/2)}")
+
+    # Create a frame to contain all widgets
+    fm_frame = tk.Frame(fm_options_window, pady=20, padx=20)
+    fm_frame.pack(expand=True)
+    fm_frame.configure(bg="#83aeca", highlightbackground="#00013b", highlightthickness=2)
+    
+    label = tk.Label(fm_frame, text="CHOOSE AN OPTION", font=("Helvetica", 16), bg="#83aeca")
     label.pack(pady=10)
-    log_button = tk.Button(fm_options_window, text="FM Login ", command=fm_login, font=("Helvetica", 14))
+    log_button = tk.Button(fm_frame, text="Fund Manager Login ", command=fm_login, font=("Helvetica", 14), width=35, bg='blue', fg='white')
     log_button.pack(pady=10)
-    uc_button= tk.Button(fm_options_window, text="Certificte Upload ", command=upload, font=("Helvetica", 14))
+    uc_button= tk.Button(fm_frame, text="Certificate Upload ", command=upload, font=("Helvetica", 14), width=35, bg='blue', fg='white')
     uc_button.pack(pady=10)
-    cm_button= tk.Button(fm_options_window, text="View Customer with maximum investmert", command=cmi, font=("Helvetica", 14))
+    cm_button= tk.Button(fm_frame, text="View Customer with Maximum Investmert", command=cmi, font=("Helvetica", 14), width=35, bg='blue', fg='white')
     cm_button.pack(pady=10)
+
+    exit_button = tk.Button(fm_frame, text="EXIT", command=fm_options_window.destroy, font=labels_font, width =20, bg='red', fg='white')
+    exit_button.pack(pady=20)
     fm_options_window.mainloop()
 
 def upload():
@@ -379,6 +495,7 @@ def add_certificate(cert_id, cert_name, issue_date, expiry_date):
     #                (cert_id, cert_name, issue_date, expiry_date))
     # db.commit()
     messagebox.showinfo("Success", "Certificate information added!")
+
 def show_certificate_input_window(cert_id):
     cert_input_window = tk.Tk()
     cert_input_window.title("Add Certificate Information")
@@ -655,68 +772,112 @@ def show_cust_options():
                 
         check_cus()
 
-    custadd_window = tk.Tk()
+    custadd_window = tk.Toplevel()
     custadd_window.title("Add Customer Account")
 
+    icon_path = "images/icon.ico"  # Replace with the path to your icon file
+    window.iconbitmap(icon_path)
+
+    background_image_ca = PhotoImage(file="images/10.png")
+    background_label_ca = tk.Label(custadd_window, image=background_image_ca)
+    background_label_ca.place(relwidth=1, relheight=1)
+    screen_width = custadd_window.winfo_screenwidth()
+    screen_height = custadd_window.winfo_screenheight()
+    window_width = int(screen_width)
+    window_height = int(screen_height)
+    custadd_window.geometry(f"{window_width}x{window_height}+{int((screen_width - window_width)/2)}+{int((screen_height - window_height)/2)}")
+
+    ca_frame = tk.Frame(custadd_window, pady=20, padx=20)
+    ca_frame.pack(expand=True)
+    ca_frame.configure(bg="#83aeca", highlightbackground="#00013b", highlightthickness=2)
+
     # Design the add account window
-    cid_label = tk.Label(custadd_window, text="Customer Id", font=("Helvetica", 12))
+    cid_label = tk.Label(ca_frame, text="Customer Id", font=("Helvetica", 15), bg="#83aeca")
     cid_label.pack(pady=5)
-    cid_entry = tk.Entry(custadd_window, font=("Helvetica", 12))
+    cid_entry = tk.Entry(ca_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2 )
     cid_entry.pack(pady=5)
 
-    cname_label = tk.Label(custadd_window, text="Customer Name", font=("Helvetica", 12))
+    cname_label = tk.Label(ca_frame, text="Customer Name", font=("Helvetica", 15), bg="#83aeca")
     cname_label.pack(pady=5)
-    cname_entry = tk.Entry(custadd_window, font=("Helvetica", 12))
+    cname_entry = tk.Entry(ca_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
     cname_entry.pack(pady=5)
 
-    dob_label = tk.Label(custadd_window, text="DOB(yyyy-mm-dd)", font=("Helvetica", 12))
+    dob_label = tk.Label(ca_frame, text="DOB(yyyy-mm-dd)", font=("Helvetica", 15), bg="#83aeca")
     dob_label.pack(pady=5)
-    dob_entry = tk.Entry(custadd_window, font=("Helvetica", 12))
+    dob_entry = tk.Entry(ca_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
     dob_entry.pack(pady=5)
 
-    addr_label = tk.Label(custadd_window, text="Address", font=("Helvetica", 12))
+    addr_label = tk.Label(ca_frame, text="Address", font=("Helvetica", 15), bg="#83aeca")
     addr_label.pack(pady=5)
-    addr_entry = tk.Entry(custadd_window, font=("Helvetica", 12))
+    addr_entry = tk.Entry(ca_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
     addr_entry.pack(pady=5)
 
-    g_label = tk.Label(custadd_window, text="Gender", font=("Helvetica", 12))
+    g_label = tk.Label(ca_frame, text="Gender", font=("Helvetica", 15), bg="#83aeca")
     g_label.pack(pady=5)
-    g_entry = tk.Entry(custadd_window, font=("Helvetica", 12))
+    g_entry = tk.Entry(ca_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
     g_entry.pack(pady=5)
 
-    ph_label = tk.Label(custadd_window, text="Phone", font=("Helvetica", 12))
+    ph_label = tk.Label(ca_frame, text="Phone", font=("Helvetica", 15), bg="#83aeca")
     ph_label.pack(pady=5)
-    ph_entry = tk.Entry(custadd_window, font=("Helvetica", 12))
+    ph_entry = tk.Entry(ca_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
     ph_entry.pack(pady=5)
 
-    ctype_label = tk.Label(custadd_window, text="Cust-type", font=("Helvetica", 12))
+    ctype_label = tk.Label(ca_frame, text="Customer Type", font=("Helvetica", 15), bg="#83aeca")
     ctype_label.pack(pady=5)
-    ctype_entry = tk.Entry(custadd_window, font=("Helvetica", 12))
+    ctype_entry = tk.Entry(ca_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
     ctype_entry.pack(pady=5)
 
-    add_button = tk.Button(custadd_window, text="Login", command=insert_cus_account, font=("Helvetica", 14))
+    add_button = tk.Button(ca_frame, text="Login", command=insert_cus_account, font=("Helvetica", 15), width=25, bg='blue', fg='white')
     add_button.pack(pady=10)
+
+    exit_button = tk.Button(ca_frame, text="EXIT", command=custadd_window.destroy, font=labels_font, width =15, bg='red', fg='white')
+    exit_button.pack(pady=10)
 
     custadd_window.mainloop()
 
 
 def show_options_window():
     #window.withdraw()
-    options_window = tk.Tk()
+    options_window = tk.Toplevel()
     options_window.title("Bank Account Options")
 
-    # Design the options window
-    label = tk.Label(options_window, text="Choose an option:", font=("Helvetica", 16))
-    label.pack(pady=10)
+    icon_path = "images/icon.ico"  # Replace with the path to your icon file
+    options_window.iconbitmap(icon_path)
 
-    search_button = tk.Button(options_window, text="Search Bank Account", command=search_bank_account, font=("Helvetica", 14))
+    window.configure(bg="#518db5")
+    background_image = PhotoImage(file="images/5.png")
+    background_label = tk.Label(options_window, image=background_image)
+    background_label.place(relwidth=1, relheight=1)
+
+    # Get the screen width and height
+    screen_width = options_window.winfo_screenwidth()
+    screen_height = options_window.winfo_screenheight()
+
+    # Set window size and position for fullscreen and centered
+    window_width = int(screen_width)
+    window_height = int(screen_height)
+    options_window.geometry(f"{window_width}x{window_height}+{int((screen_width - window_width)/2)}+{int((screen_height - window_height)/2)}")
+
+    # Create a frame to contain all widgets
+    o_frame = tk.Frame(options_window, pady=20, padx=20)
+    o_frame.pack(expand=True)
+    o_frame.configure(bg="#83aeca", highlightbackground="#00013b", highlightthickness=2)
+
+    # Design the options window
+    label = tk.Label(o_frame, text="CHOOSE AN OPTION", font=("Helvetica", 16), bg="#83aeca")
+    label.pack(pady=20)
+
+    search_button = tk.Button(o_frame, text="Search Bank Account", command=search_bank_account, font=("Helvetica", 14), width =25, bg='blue', fg='white')
     search_button.pack(pady=10)
 
-    view_button = tk.Button(options_window, text="View Bank Accounts", command=view_bank_accounts, font=("Helvetica", 14))
+    view_button = tk.Button(o_frame, text="View Bank Accounts", command=view_bank_accounts, font=("Helvetica", 14), width =25, bg='blue', fg='white')
     view_button.pack(pady=10)
 
-    add_button = tk.Button(options_window, text="Add Bank Account", command=add_bank_account, font=("Helvetica", 14))
+    add_button = tk.Button(o_frame, text="Add Bank Account", command=add_bank_account, font=("Helvetica", 14), width =25, bg='blue', fg='white')
     add_button.pack(pady=10)
+
+    exit_button = tk.Button(o_frame, text="EXIT", command=options_window.destroy, font=labels_font, width =15, bg='red', fg='white')
+    exit_button.pack(pady=10)
 
     options_window.mainloop()
 
@@ -727,7 +888,7 @@ def search_bank_account():
         records = cursor.fetchall()
         search_res_window = tk.Tk()
         search_res_window.title("Search")
-        search_result = tk.Text(search_res_window, height=10, width=50, state="disabled", font=("Helvetica", 12))
+        search_result = tk.Text(search_res_window, height=20, width=100, state="disabled", font=("Helvetica", 15))
         search_result.pack(pady=10)
         if records:
             # Display the search results
@@ -740,23 +901,48 @@ def search_bank_account():
             messagebox.showinfo("Search", "Bank account not found!")
         search_window.mainloop()
 
-    search_window = tk.Tk()
-    search_window.title("Search")
-    search_label = tk.Label(search_window, text="Search by Account No", font=("Helvetica", 12))
+    search_window = tk.Toplevel()
+    search_window.title("Search Bank Account")
+
+    icon_path = "images/icon.ico"  # Replace with the path to your icon file
+    search_window.iconbitmap(icon_path)
+
+    background_image_sw = PhotoImage(file="images/5.png")
+    background_label_sw = tk.Label(search_window, image=background_image_sw)
+    background_label_sw.place(relwidth=1, relheight=1)
+    screen_width = search_window.winfo_screenwidth()
+    screen_height = search_window.winfo_screenheight()
+    window_width = int(screen_width)
+    window_height = int(screen_height)
+    search_window.geometry(f"{window_width}x{window_height}+{int((screen_width - window_width)/2)}+{int((screen_height - window_height)/2)}")
+
+    s_frame = tk.Frame(search_window, pady=20, padx=20)
+    s_frame.pack(expand=True)
+    s_frame.configure(bg="#83aeca", highlightbackground="#00013b", highlightthickness=2)
+
+
+    search_label = tk.Label(s_frame, text="Search By Account Number", font=("Helvetica", 15), bg="#83aeca")
     search_label.pack(pady=5)
-    search_entry = tk.Entry(search_window, font=("Helvetica", 12))
+    search_entry = tk.Entry(s_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
     search_entry.pack(pady=5)
-    search_button = tk.Button(search_window, text="Search", command=search, font=("Helvetica", 14))
+    search_button = tk.Button(s_frame, text="SEARCH", command=search, font=("Helvetica", 15), width=25, bg='blue', fg='white')
     search_button.pack(pady=10)
+    exit_button = tk.Button(s_frame, text="EXIT", command=search_window.destroy, font=labels_font, width =15, bg='red', fg='white')
+    exit_button.pack(pady=10)
 
 
 def view_bank_accounts():
     cursor.execute("SELECT * FROM bank WHERE amc_id = %s", (current_amc_id,))
     records = cursor.fetchall()
     view_res_window = tk.Tk()
-    view_res_window.title("View")
-    view_result = tk.Text(view_res_window, height=10, width=50, state="disabled", font=("Helvetica", 12))
+    view_res_window.title("View Bank Accounts")
+
+    icon_path = "images/icon.ico"  # Replace with the path to your icon file
+    window.iconbitmap(icon_path)
+
+    view_result = tk.Text(view_res_window, height=10, width=90, state="disabled", font=("Helvetica", 15), bg="#83aeca")
     view_result.pack(pady=10)
+
     if records:
         # Display the bank accounts
         view_result.config(state="normal")
@@ -781,65 +967,155 @@ def add_bank_account():
         db.commit()
         messagebox.showinfo("Success", "Bank account added!")
 
-    add_account_window = tk.Tk()
+    add_account_window = tk.Toplevel()
     add_account_window.title("Add Bank Account")
 
+    background_image = PhotoImage(file="images/7.png")
+    background_label = tk.Label(add_account_window, image=background_image)
+    background_label.place(relwidth=1, relheight=1)
+    screen_width = add_account_window.winfo_screenwidth()
+    screen_height = add_account_window.winfo_screenheight()
+    window_width = int(screen_width)
+    window_height = int(screen_height)
+    add_account_window.geometry(f"{window_width}x{window_height}+{int((screen_width - window_width)/2)}+{int((screen_height - window_height)/2)}")
+
+    aa_frame = tk.Frame(add_account_window, pady=20, padx=20)
+    aa_frame.pack(expand=True)
+    aa_frame.configure(bg="#83aeca", highlightbackground="#00013b", highlightthickness=2)
+
     # Design the add account window
-    acc_no_label = tk.Label(add_account_window, text="Account Number", font=("Helvetica", 12))
+    acc_no_label = tk.Label(aa_frame, text="Account Number", font=("Helvetica", 15), bg="#83aeca")
     acc_no_label.pack(pady=5)
-    acc_no_entry = tk.Entry(add_account_window, font=("Helvetica", 12))
+    acc_no_entry = tk.Entry(aa_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
     acc_no_entry.pack(pady=5)
 
-    ifsc_label = tk.Label(add_account_window, text="IFSC Code", font=("Helvetica", 12))
+    ifsc_label = tk.Label(aa_frame, text="IFSC Code", font=("Helvetica", 15), bg="#83aeca")
     ifsc_label.pack(pady=5)
-    ifsc_entry = tk.Entry(add_account_window, font=("Helvetica", 12))
+    ifsc_entry = tk.Entry(aa_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
     ifsc_entry.pack(pady=5)
 
-    bank_name_label = tk.Label(add_account_window, text="Bank Name", font=("Helvetica", 12))
+    bank_name_label = tk.Label(aa_frame, text="Bank Name", font=("Helvetica", 15), bg="#83aeca")
     bank_name_label.pack(pady=5)
-    bank_name_entry = tk.Entry(add_account_window, font=("Helvetica", 12))
+    bank_name_entry = tk.Entry(aa_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
     bank_name_entry.pack(pady=5)
 
-    balance_label = tk.Label(add_account_window, text="Balance Amount", font=("Helvetica", 12))
+    balance_label = tk.Label(aa_frame, text="Balance Amount", font=("Helvetica", 15), bg="#83aeca")
     balance_label.pack(pady=5)
-    balance_entry = tk.Entry(add_account_window, font=("Helvetica", 12))
+    balance_entry = tk.Entry(aa_frame, font=("Helvetica", 15), width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
     balance_entry.pack(pady=5)
 
-    add_button = tk.Button(add_account_window, text="Add", command=insert_bank_account, font=("Helvetica", 14))
+    add_button = tk.Button(aa_frame, text="ADD ACCOUNT", command=insert_bank_account, font=("Helvetica", 15), width=25, bg='blue', fg='white')
     add_button.pack(pady=10)
+
+    exit_button = tk.Button(aa_frame, text="EXIT", command=add_account_window.destroy, font=labels_font, width =15, bg='red', fg='white')
+    exit_button.pack(pady=10)
 
     add_account_window.mainloop()
     
 
+def exit_application():
+    window.destroy()  # Close the window and terminate the application
+
+
+# Create the Tkinter window
+splash_window = tk.Tk()
+splash_window.title("WealthWise Database Management System")
+
+icon_path = "images/icon.ico"  # Replace with the path to your icon file
+splash_window.iconbitmap(icon_path)
+
+background_image = PhotoImage(file="images/wealth2.png")
+background_label = tk.Label(splash_window, image=background_image)
+background_label.place(relwidth=1, relheight=1)
+
+screen_width = splash_window.winfo_screenwidth()
+screen_height = splash_window.winfo_screenheight()
+
+
+# Set window size and position for fullscreen and centered
+window_width = int(screen_width )
+window_height = int(screen_height)
+splash_window.geometry(f"{window_width}x{window_height}+{int((screen_width - window_width)/2)}+{int((screen_height - window_height)/2)}")
+
+# Schedule the window to close after 10 seconds
+def destroy_splash():
+    splash_window.destroy()
+
+splash_window.after(100, destroy_splash)
+splash_window.mainloop()
 
 # Create the main window
 window = tk.Tk()
-window.title("AMC Record Application")
+window.title("WealthWise - AMC Authentication Window")
+#window.attributes("-alpha", 0.80)
+
+icon_path = "images/icon.ico"  # Replace with the path to your icon file
+window.iconbitmap(icon_path)
+
+window.configure(bg="#518db5")
+background_image = PhotoImage(file="images/wealth4.png")
+background_label = tk.Label(window, image=background_image)
+background_label.place(relwidth=1, relheight=1)
+
+# Get the screen width and height
+screen_width = window.winfo_screenwidth()
+screen_height = window.winfo_screenheight()
+
+print(screen_width, screen_height)
+
+# Set window size and position for fullscreen and centered
+window_width = int(screen_width )
+window_height = int(screen_height)
+window.geometry(f"{window_width}x{window_height}+{int((screen_width - window_width)/2)}+{int((screen_height - window_height)/2)}")
 
 # Create labels and entry fields for ID, Address, Type, and AMC Name
-amc_id_label = tk.Label(window, text="AMC Id",font=("Helvetica", 12))
-amc_id_label.pack(pady=5)
-amc_id_entry = tk.Entry(window,font=("Helvetica", 12))
-amc_id_entry.pack(pady=5)
+labels_font = ("Helvetica", 15)
+entry_font = ("Helvetica", 15)
+label_bg_color = "#83aeca"  
+border_color = "#054a77"
 
-address_label = tk.Label(window, text="Address",font=("Helvetica", 12))
-address_label.pack(pady=5)
-address_entry = tk.Entry(window,font=("Helvetica", 12))
-address_entry.pack(pady=5)
+# Create a frame to contain all widgets
+frame = tk.Frame(window, pady=20, padx=20)
+frame.pack(expand=True)
+frame.configure(bg="#83aeca", highlightbackground="#00013b", highlightthickness=2)
 
-type_label = tk.Label(window, text="AMC Type",font=("Helvetica", 12))
-type_label.pack(pady=5)
-type_entry = tk.Entry(window,font=("Helvetica", 12))
-type_entry.pack(pady=5)
+amc_id_label = tk.Label(frame, text="AMC ID", font=labels_font, bg=label_bg_color)
+amc_id_label.grid(row=0, column=0, padx=10, pady=10)
 
-amc_name_label = tk.Label(window, text="AMC Name",font=("Helvetica", 12))
-amc_name_label.pack(pady=5)
-amc_name_entry = tk.Entry(window,font=("Helvetica", 12))
-amc_name_entry.pack(pady=5)
+amc_id_entry = tk.Entry(frame, font=entry_font, width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
+amc_id_entry.grid(row=0, column=1, padx=10, pady=10)
+
+address_label = tk.Label(frame, text="Company Address", font=labels_font, bg=label_bg_color)
+address_label.grid(row=1, column=0, padx=10, pady=10)
+
+address_entry = tk.Text(frame, font=entry_font, wrap=tk.WORD, height=4, width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
+address_entry.grid(row=1, column=1, padx=10, pady=10)
+
+type_label = tk.Label(frame, text="AMC Type", font=labels_font, bg=label_bg_color)
+type_label.grid(row=2, column=0, padx=5, pady=5)
+
+type_entry = tk.Entry(frame, font=entry_font, width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
+type_entry.grid(row=2, column=1, padx=5, pady=5)
+
+amc_name_label = tk.Label(frame, text="AMC Name", font=labels_font, bg=label_bg_color)
+amc_name_label.grid(row=3, column=0, padx=10, pady=10)
+
+amc_name_entry = tk.Entry(frame, font=entry_font, width=30, **{'border': 3, 'relief': 'flat'}, highlightbackground="#054a77", highlightthickness=2)
+amc_name_entry.grid(row=3, column=1, padx=10, pady=10)
+
+
+space_frame = tk.Frame(frame, height=30, bg="#83aeca")
+space_frame.grid(row=4, column=0, columnspan=2 )
 
 # Create a login button
-login_button = tk.Button(window, text="Login", command=check_amc)
-login_button.pack()
+login_button = tk.Button(frame, text="LOGIN / REGISTER", command=check_amc, font=labels_font, width=25, bg='blue', fg='white')
+login_button.grid(row=5, column=0, columnspan=2, pady=10)
+
+
+#Exit Button for application termination
+exit_button = tk.Button(frame, text="EXIT", command=exit_application, font=labels_font, width =15, bg='red', fg='white')
+exit_button.grid(row=6, column=0, columnspan=2, pady=10)
+
 
 # Start the Tkinter main loop
 window.mainloop()
