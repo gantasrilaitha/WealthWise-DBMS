@@ -22,3 +22,10 @@ A comprehensive asset management system designed to help asset management compan
 3. Install the dependency :```pip install mysql-connector-python```
 4. Run ```.py``` file
 
+## **A brief outlook**
+
+
+
+https://github.com/user-attachments/assets/0f9d4d29-e915-4235-993b-054ff0a3a14e
+
+
