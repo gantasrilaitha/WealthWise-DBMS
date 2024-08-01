@@ -19,5 +19,6 @@ A comprehensive asset management system designed to help asset management compan
 ## **How to Use?**
 1. Run queries.sql file to create all necessary db and relations.
 2. Install required libraries following the tech-stack
-3. Run ```.py``` file
+3. Install the dependency :```pip install mysql.connector```
+4. Run ```.py``` file
 
